@@ -27,7 +27,8 @@ public class WalkingDrawers extends ApplicationAdapter {
     OrthographicCamera staticCamera;
     float moveSpeed = 20;
     float zoomSpeed = 0.1f;
-    int numberOfDrawers = 40000;
+    int numberOfDrawers = 20000;
+    int numberOfViruses = 100;
     int screenSize = 1200;
 
     @Override
@@ -36,7 +37,7 @@ public class WalkingDrawers extends ApplicationAdapter {
         font = new BitmapFont();
         font.setColor(1, 1, 1, 1);
         Gdx.graphics.setWindowedMode(screenSize, screenSize);
-        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth() * 8 , Gdx.graphics.getHeight() * 8, false);
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth() * 8, Gdx.graphics.getHeight() * 8, false);
         fboRegion = new TextureRegion(fbo.getColorBufferTexture());
         shape = new ShapeRenderer();
         fboRegion.flip(false, true); // FBOs are upside down
