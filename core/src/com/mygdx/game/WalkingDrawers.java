@@ -23,13 +23,19 @@ public class WalkingDrawers extends ApplicationAdapter {
     FrameBuffer fbo;
     TextureRegion fboRegion;
     ArrayList<Drawer> drawers = new ArrayList<>();
+    ArrayList<Virus> viruses = new ArrayList<>();
     OrthographicCamera camera;
     OrthographicCamera staticCamera;
-    float moveSpeed = 20;
-    float zoomSpeed = 0.1f;
+    float baseMoveSpeed = 700f;
+    float moveSpeed;
+    float baseZoomSpeed = 1f;
+    float zoomSpeed;
     int numberOfDrawers = 20000;
-    int numberOfViruses = 100;
-    int screenSize = 1200;
+    int numberOfViruses = 200;
+    int screenSize = 1080;
+    float drawerSize = 2f;
+    float virusSize = 8f;
+    int virusMovementMultiplier = 4; //how many times per frame should viruses move
 
     @Override
     public void create() {
@@ -51,6 +57,9 @@ public class WalkingDrawers extends ApplicationAdapter {
         for (int i = 0; i < numberOfDrawers; i++) {
             drawers.add(new Drawer());
         }
+        for (int i = 0; i < numberOfViruses; i++) {
+            viruses.add(new Virus());
+        }
     }
 
     @Override
@@ -65,7 +74,14 @@ public class WalkingDrawers extends ApplicationAdapter {
         for (Drawer drawer : drawers) {
             drawer.update();
             shape.setColor(drawer.getColor());
-            shape.rect(drawer.getX(), drawer.getY(), 2f, 2f);
+            shape.rect(drawer.getX(), drawer.getY(), drawerSize, drawerSize);
+        }
+        for (Virus virus : viruses) {
+            shape.setColor(virus.getColor());
+            for (int i = 0; i < virusMovementMultiplier; i++) {
+                virus.update();
+                shape.rect(virus.getX(), virus.getY(), virusSize, virusSize);
+            }
         }
         shape.end();
         fbo.end();
@@ -73,11 +89,19 @@ public class WalkingDrawers extends ApplicationAdapter {
         batch.begin();
         batch.draw(fboRegion.getTexture(), 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() - 10);
+        font.draw(batch, "camera.zoom: " + String.format("%.3g%n", camera.zoom), 10, Gdx.graphics.getHeight() - 25);
+        font.draw(batch, "movement speed: " + String.format("%.3g%n", moveSpeed), 10, Gdx.graphics.getHeight() - 40);
+        font.draw(batch, "zoom speed: " + String.format("%.3g%n", zoomSpeed), 10, Gdx.graphics.getHeight() - 55);
+
+
+
         batch.end();
     }
 
     public void handleCameraInput() {
+        updateCameraSpeed();
         // move camera left and right
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             camera.translate(0, moveSpeed * Gdx.graphics.getDeltaTime());
@@ -95,6 +119,7 @@ public class WalkingDrawers extends ApplicationAdapter {
         // zoom camera
         if (Gdx.input.isKeyPressed((Input.Keys.UP))) {
             camera.zoom -= zoomSpeed * Gdx.graphics.getDeltaTime();
+            if (camera.zoom <= 0.05f) camera.zoom = 0.05F;
         } else if (Gdx.input.isKeyPressed((Input.Keys.DOWN))) {
             camera.zoom += zoomSpeed * Gdx.graphics.getDeltaTime();
         }
@@ -103,6 +128,11 @@ public class WalkingDrawers extends ApplicationAdapter {
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         }
+    }
+
+    public void updateCameraSpeed() {
+        moveSpeed = baseMoveSpeed * camera.zoom;
+        zoomSpeed = baseZoomSpeed * camera.zoom;
     }
 
     public void dispose() {
