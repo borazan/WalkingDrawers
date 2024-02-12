@@ -26,6 +26,8 @@ public class WalkingDrawers extends ApplicationAdapter {
     ArrayList<Virus> viruses = new ArrayList<>();
     OrthographicCamera camera;
     OrthographicCamera staticCamera;
+    int worldWidth;
+    int worldHeight;
     float baseMoveSpeed = 700f;
     float moveSpeed;
     float baseZoomSpeed = 1f;
@@ -43,11 +45,13 @@ public class WalkingDrawers extends ApplicationAdapter {
         font = new BitmapFont();
         font.setColor(1, 1, 1, 1);
         Gdx.graphics.setWindowedMode(screenSize, screenSize);
-        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth() * 8, Gdx.graphics.getHeight() * 8, false);
+        worldWidth = Gdx.graphics.getWidth() * 8;
+        worldHeight = Gdx.graphics.getHeight() * 8;
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, worldWidth, worldHeight, false);
         fboRegion = new TextureRegion(fbo.getColorBufferTexture());
         shape = new ShapeRenderer();
         fboRegion.flip(false, true); // FBOs are upside down
-        staticCamera = new OrthographicCamera(Gdx.graphics.getWidth() * 8, Gdx.graphics.getHeight() * 8);
+        staticCamera = new OrthographicCamera(worldWidth, worldHeight);
         staticCamera.position.set(staticCamera.viewportWidth / 2, staticCamera.viewportHeight / 2, 0);
         staticCamera.update();
         camera = new OrthographicCamera((float) Gdx.graphics.getWidth(), (float) Gdx.graphics.getHeight());
@@ -96,7 +100,6 @@ public class WalkingDrawers extends ApplicationAdapter {
         font.draw(batch, "zoom speed: " + String.format("%.3g%n", zoomSpeed), 10, Gdx.graphics.getHeight() - 55);
 
 
-
         batch.end();
     }
 
@@ -122,6 +125,7 @@ public class WalkingDrawers extends ApplicationAdapter {
             if (camera.zoom <= 0.05f) camera.zoom = 0.05F;
         } else if (Gdx.input.isKeyPressed((Input.Keys.DOWN))) {
             camera.zoom += zoomSpeed * Gdx.graphics.getDeltaTime();
+            if (camera.zoom >= 1f) camera.zoom = 1f;
         }
         // clear canvas
         if (Gdx.input.isKeyPressed((Input.Keys.SPACE))) {
