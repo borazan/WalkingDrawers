@@ -25,7 +25,7 @@ public class WalkingDrawers extends ApplicationAdapter {
     ArrayList<Drawer> drawers = new ArrayList<>();
     OrthographicCamera camera;
     OrthographicCamera staticCamera;
-    float moveSpeed = 100;
+    float moveSpeed = 20;
     float zoomSpeed = 0.1f;
     int numberOfDrawers = 40000;
     int screenSize = 1200;
@@ -45,7 +45,7 @@ public class WalkingDrawers extends ApplicationAdapter {
         staticCamera.update();
         camera = new OrthographicCamera((float) Gdx.graphics.getWidth(), (float) Gdx.graphics.getHeight());
         camera.setToOrtho(false);
-        camera.zoom = .1f;
+        camera.zoom = .05f;
         camera.update();
         for (int i = 0; i < numberOfDrawers; i++) {
             drawers.add(new Drawer());
