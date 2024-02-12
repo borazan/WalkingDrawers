@@ -13,7 +13,7 @@ public class Drawer {
     private double alpha;
     private float biasXThreshold; //compared against Math.Random 0.5 in move()
     private float biasYThreshold;
-    private final float biasChance = 0.0005f; //chance to enter a movement bias phase for the given duration
+    private final float biasChance = 0.05f; //chance to enter a movement bias phase for the given duration
     private final int biasDuration = 5; //in seconds, gets multiplied by 1000 for ms
     private final float biasXIntensity = 0.2f; //how intense should this Drawer's biases be
     private final float biasYIntensity = 0.2f;
@@ -21,8 +21,8 @@ public class Drawer {
     private boolean isBiased = false;
 
     public Drawer() {
-        this.xMax = Gdx.graphics.getWidth();
-        this.yMax = Gdx.graphics.getHeight();
+        this.xMax = Gdx.graphics.getWidth() * 8;
+        this.yMax = Gdx.graphics.getHeight() * 8;
         this.x = (int) (Math.random() * xMax);
         this.y = (int) (Math.random() * yMax);
         this.alpha = 1.0;
@@ -52,7 +52,7 @@ public class Drawer {
 
         if (isBiased) {
             x += (Math.random() > biasXThreshold) ? 1 : -1;
-            y += (Math.random() > biasXThreshold) ? 1 : -1;
+            y += (Math.random() > biasYThreshold) ? 1 : -1;
 
         } else {
             x += (Math.random() > 0.5) ? 1 : -1;
